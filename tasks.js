@@ -55,3 +55,21 @@ function filterFirstElem(array, callback) {
         }
     }
 }
+
+//task 1 for 1 parameter only
+
+function partApp(parameter, func) {
+    newFunc = func.bind(null, parameter);
+    return newFunc;
+}
+
+
+
+// //task1 for multiple params
+// function partApp2() {
+//     var args = [...arguments];
+//     var func = arguments[arguments.length - 1];
+//     for(var i = 0; i < arguments.length; i++) {
+        
+//     }
+// }

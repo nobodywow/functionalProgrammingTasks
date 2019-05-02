@@ -1,20 +1,3 @@
-// var a = 0;
-// var b = 0;
-
-// function partApp(parameters, callback) {
-// console.log('ayy');
-// }
-
-// partApp(a,b);
-
-// function callb() {
-
-// }
-
-// function test(par1, par2) {
-//     console.log(arguments);
-// }
-
 
 //task 5
 

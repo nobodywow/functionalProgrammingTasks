@@ -171,3 +171,22 @@ var randomSum = unfold(
 console.log(newReduce(randomSum, function(accum, item) {
     return accum + item;
 }, 0));
+
+
+//task2 leftover
+
+
+function curry(func) {
+    function f(arg) {
+        if(func.length < f.length)
+        {
+            return func(...arg);
+        }
+        else {    
+            return function(argsAfter) {
+                func(...arg, ...argsAfter);
+            }        
+        }        
+    }
+    return f;    
+}

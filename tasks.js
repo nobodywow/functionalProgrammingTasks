@@ -180,11 +180,11 @@ function curry(func) {
     function f(arg) {
         if(func.length < f.length)
         {
-            return func(...arg);
+            return func.apply(null, arg);
         }
         else {    
             return function(argsAfter) {
-                func(...arg, ...argsAfter);
+                f.apply(null, arg.concat(argsAfter));
             }        
         }        
     }

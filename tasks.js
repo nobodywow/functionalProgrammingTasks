@@ -178,7 +178,7 @@ console.log(newReduce(randomSum, function(accum, item) {
 
 function curry(func) {
     function f(arg) {
-        if(func.length < f.length)
+        if(func.length < arg.length)
         {
             return func.apply(null, arg);
         }

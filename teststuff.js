@@ -170,3 +170,40 @@
 
 
 
+
+
+function partApp2(func) {
+    if(arguments.length > 1) {
+        var boundArgs = Array.prototype.slice.call(arguments, 1);
+        return function() {
+            return func.apply(null, boundArgs.concat(Array.prototype.slice.call(arguments)));
+        }
+    }
+}
+
+
+
+function curry(func) {
+    function f(arg) {
+        var tempArguments = Array.prototype.slice.call(arguments);
+        if(func.length <= tempArguments.length)
+        {
+            return func.apply(null, tempArguments);
+        }
+        else {    
+            return function(argsAfter) {
+                var newArgs = Array.prototype.concat.call(f, tempArguments.concat(argsAfter));
+                return partApp2.apply(null, newArgs);
+            }        
+        }        
+    }
+    return f;    
+}
+
+var test = function(a,b,c) {
+    return a+b+c;
+}
+
+var newF = curry(test);
+console.log(newF(1)(4)(3));
+

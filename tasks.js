@@ -21,7 +21,7 @@ function newFilter(array, callback) {
     return newArray;
 }
 
-//task3 ?
+//task3 
 
 function newReduce(array, callback, initialValue) {
     var prevElem = initialValue;
@@ -66,11 +66,11 @@ function partApp(parameter, func) {
 
 //task1 for multiple params
 
-function partApp2(func) {
+function partAppMultipleArgs(func) {
     if(arguments.length > 1) {
-        var boundArgs = arguments.slice(1);
+        var boundArgs = Array.prototype.slice.call(arguments, 1);
         return function() {
-            return func.apply(null, boundArgs.concat(arguments))
+            return func.apply(null, boundArgs.concat(Array.prototype.slice.call(arguments)));
         }
     }
 }
@@ -85,9 +85,9 @@ function memoization(func) {
             return cache[arg];
         }
         else {           
-            var f = func.call(null, arg);
-            cache[arg] = f;
-            return f;
+            var toCache = func.call(null, arg);
+            cache[arg] = toCache;
+            return toCache;
         }
     }    
 }
@@ -122,14 +122,14 @@ console.log(unfold(
 function unfoldGenerator(callback, value) {
     var result = [];
     var current = value;
-    function * gen(value) {
+    function * unfold(value) {
         var {current, next, done} = callback(value);
         if(!done) {
             result.push(current);            
-            yield * gen(next); 
+            yield * unfold(next); 
         }        
     }
-    var unfold = gen(current);
+    var unfold = unfold(current);
     unfold.next();
     return result;
 }
@@ -173,20 +173,39 @@ console.log(newReduce(randomSum, function(accum, item) {
 }, 0));
 
 
-//task2 leftover
-
+//task2 
 
 function curry(func) {
     function f(arg) {
-        if(func.length < arg.length)
+        var tempArguments = Array.prototype.slice.call(arguments);
+        if(func.length <= tempArguments.length)
         {
-            return func.apply(null, arg);
+            return func.apply(null, tempArguments);
         }
         else {    
             return function(argsAfter) {
-                f.apply(null, arg.concat(argsAfter));
+                return f.apply(null, tempArguments.concat(argsAfter));
             }        
         }        
     }
     return f;    
+}
+
+//task2 with partApp
+
+function curryWithPartApp(func) {
+    function f(arg) {
+        var tempArguments = Array.prototype.slice.call(arguments);
+        if(func.length <= tempArguments.length)
+        {
+            return func.apply(null, tempArguments);
+        }
+        else {    
+            return function(argsAfter) {
+                var newArgs = Array.prototype.concat.call(f, tempArguments.concat(argsAfter));
+                return partAppMultipleArgs.apply(null, newArgs);
+            }        
+        }        
+    }
+    return f;
 }

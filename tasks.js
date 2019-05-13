@@ -1,61 +1,3 @@
-
-//task 5
-
-function newMap(array, callback) {
-    var newArray = [];
-    for(var i = 0; i < array.length; i++) {
-        newArray[i] = callback(array[i]);
-    }
-    return newArray;
-}
-
-//task6
-
-function newFilter(array, callback) {
-    var newArray = [];
-    for(var i = 0; i < array.length; i++) {
-        if(callback(array[i])) {
-            newArray.push(array[i]);
-        }
-    }
-    return newArray;
-}
-
-//task3 
-
-function newReduce(array, callback, initialValue) {
-    var prevElem = initialValue;
-    for(var i = 0; i < array.length; i++) {        
-        prevElem = callback(prevElem, array[i], i, array);
-    }
-    return prevElem;
-}
-
-//task 7
-
-var array = [1,23,2,6,12,0];
-
-var evenNumbersSum = newReduce(array, function(accum, item) {
-    if(item % 2 == 0) {
-        accum.sum = accum.sum + item;
-        accum.count = accum.count + 1;
-    }
-    return accum;
-}, {sum: 0, count: 0});
-
-var answer = evenNumbersSum.sum / evenNumbersSum.count;
-console.log(answer);
-
-//task 9
-
-function filterFirstElem(array, callback) {
-    for(var i = 0; i < array.length; i++) {
-        if(callback(array[i])) {
-            return array[i];
-        }
-    }
-}
-
 //task 1 for 1 parameter only
 
 function partApp(parameter, func) {
@@ -73,30 +15,63 @@ function partAppMultipleArgs(func) {
             return func.apply(null, boundArgs.concat(Array.prototype.slice.call(arguments)));
         }
     }
+    else {
+        return func;
+    }
 }
 
-// task 11
+//task2 
 
-function memoization(func) {
-    var cache = {};
-    return function() {
-        var arg = arguments[0];
-        if (cache[arg]) {
-            return cache[arg];
+function curry(func) {
+    function f(arg) {
+        var funcArguments = Array.prototype.slice.call(arguments);
+        if(func.length <= funcArguments.length)
+        {
+            return func.apply(null, funcArguments);
         }
-        else {           
-            var toCache = func.call(null, arg);
-            cache[arg] = toCache;
-            return toCache;
+        else {    
+            return function(nextCallArgs) {
+                return f.apply(null, funcArguments.concat(nextCallArgs));
+            }        
+        }        
+    }
+    return f;    
+}
+
+//task2 with partApp
+
+function curryWithPartApp(func) {
+    function f(arg) {
+        var funcArguments = Array.prototype.slice.call(arguments);
+        if(func.length <= funcArguments.length)
+        {
+            return func.apply(null, funcArguments);
         }
-    }    
+        else {    
+            return function(nextCallArgs) {
+                var argsToCallAgain = Array.prototype.concat.call(f, funcArguments.concat(nextCallArgs));
+                return partAppMultipleArgs.apply(null, argsToCallAgain);
+            }        
+        }        
+    }
+    return f;
+}
+
+//task3 
+
+function newReduce(array, callback, initialValue) {
+    var currentState = initialValue;
+    for(var i = 0; i < array.length; i++) {        
+        currentState = callback(currentState, array[i], i, array);
+    }
+    return currentState;
 }
 
 //task4 w/o generator
 
-function unfold(callback, value) {
+function unfold(callback, initialValue) {
     var result = [];
-    var current = value;
+    var current = initialValue;
     var done = false;    
     var {current, next, done} = callback(current);
     while(!done) {  
@@ -119,17 +94,17 @@ console.log(unfold(
 
 //task4 w/ generator
 
-function unfoldGenerator(callback, value) {
+function unfoldGenerator(callback, initialValue) {
     var result = [];
-    var current = value;
-    function * unfold(value) {
-        var {current, next, done} = callback(value);
+    var current = initialValue;
+    function * unfoldGenerator(initialValue) {
+        var {current, next, done} = callback(initialValue);
         if(!done) {
             result.push(current);            
-            yield * unfold(next); 
+            yield * unfoldGenerator(next); 
         }        
     }
-    var unfold = unfold(current);
+    var unfold = unfoldGenerator(current);
     unfold.next();
     return result;
 }
@@ -146,16 +121,52 @@ console.log(unfoldGenerator(
     : { done: true}
 , 5));
 
+//task 5
+
+function newMap(array, callback) {
+    var newArray = [];
+    for(var i = 0; i < array.length; i++) {
+        newArray[i] = callback(array[i]);
+    }
+    return newArray;
+}
+
+//task6
+
+function newFilter(array, callback) {
+    var filteredArray = [];
+    for(var i = 0; i < array.length; i++) {
+        if(callback(array[i])) {
+            filteredArray.push(array[i]);
+        }
+    }
+    return filteredArray;
+}
+
+//task 7
+
+var array = [1,23,2,6,12,0];
+
+var evenNumbersSum = newReduce(array, function(accum, item) {
+    if(item % 2 == 0) {
+        accum.sum = accum.sum + item;
+        accum.count = accum.count + 1;
+    }
+    return accum;
+}, {sum: 0, count: 0});
+
+var answer = evenNumbersSum.sum / evenNumbersSum.count;
+console.log(answer);
 
 
 //task8
 
-var counter = 0;
+var callbackCounter = 0;
 
 var randomSum = unfold(
     function(n) {
-        if(counter < 10) {
-            counter = counter + 1;
+        if(callbackCounter < 10) {
+            callbackCounter = callbackCounter + 1;
             return {
                 current: n,
                 next: Math.floor(Math.random() * 100)
@@ -173,39 +184,29 @@ console.log(newReduce(randomSum, function(accum, item) {
 }, 0));
 
 
-//task2 
+//task 9
 
-function curry(func) {
-    function f(arg) {
-        var tempArguments = Array.prototype.slice.call(arguments);
-        if(func.length <= tempArguments.length)
-        {
-            return func.apply(null, tempArguments);
+function filterFirstElem(array, callback) {
+    for(var i = 0; i < array.length; i++) {
+        if(callback(array[i])) {
+            return array[i];
         }
-        else {    
-            return function(argsAfter) {
-                return f.apply(null, tempArguments.concat(argsAfter));
-            }        
-        }        
     }
-    return f;    
 }
 
-//task2 with partApp
+// task 11
 
-function curryWithPartApp(func) {
-    function f(arg) {
-        var tempArguments = Array.prototype.slice.call(arguments);
-        if(func.length <= tempArguments.length)
-        {
-            return func.apply(null, tempArguments);
+function memoization(func) {
+    var cache = {};
+    return function() {
+        var arg = arguments[0];
+        if (cache[arg]) {
+            return cache[arg];
         }
-        else {    
-            return function(argsAfter) {
-                var newArgs = Array.prototype.concat.call(f, tempArguments.concat(argsAfter));
-                return partAppMultipleArgs.apply(null, newArgs);
-            }        
-        }        
-    }
-    return f;
+        else {
+            var nonCachedResult = func.call(null, arg);
+            cache[arg] = nonCachedResult;
+            return nonCachedResult;
+        }
+    }    
 }

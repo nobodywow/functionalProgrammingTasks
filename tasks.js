@@ -5,7 +5,6 @@ function partApp(parameter, func) {
     return newFunc;
 }
 
-
 //task1 for multiple params
 
 function partAppMultipleArgs(func) {
@@ -111,7 +110,6 @@ function unfoldGenerator(callback, initialValue) {
 
 //task 4 w/ generator test
 
-
 console.log(unfoldGenerator(
     (n) => n > 0 
     ? {
@@ -124,7 +122,7 @@ console.log(unfoldGenerator(
 //task 5
 
 function newMap(array, callback) {
-    var newArray = [];
+    var newArray = new Array(array.length);
     for(var i = 0; i < array.length; i++) {
         newArray[i] = callback(array[i]);
     }
@@ -161,23 +159,23 @@ console.log(answer);
 
 //task8
 
-var callbackCounter = 0;
+function getRandomElem() {
+    return Math.floor(Math.random() * 100);
+}
 
 var randomSum = unfold(
     function(n) {
-        if(callbackCounter < 10) {
-            callbackCounter = callbackCounter + 1;
+        if(n > 0) {
+            console.log(n);
             return {
-                current: n,
-                next: Math.floor(Math.random() * 100)
+                current: getRandomElem(),
+                next: n - 1
             }
         }
-        else {
-            return {
-                done: true
-            }
-        }                
-    }, Math.floor(Math.random() * 100));
+        return {
+            done: true
+        }
+    }, 10);
 
 console.log(newReduce(randomSum, function(accum, item) {
     return accum + item;

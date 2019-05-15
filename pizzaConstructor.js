@@ -1,33 +1,39 @@
+var ingredientsKey = { meat: 'meat', cheese: 'cheese', mushrooms: 'mushrooms'};
+
 function Pizza() {
     this.squareCmPrice = 10;
-    this.ingridientsPrice = {meat: 10, cheese: 5, mushrooms: 15};
+    this.ingredientsPrice = { meat: 10, cheese: 5, mushrooms: 15 };
     this.percentage = 5;
-    this.totalPrice = function(area, ingridients) {    
-        var ingridientsSum = ingridients.reduce((accum, item) => {       
-            return this.ingridientsPrice.hasOwnProperty(item) ? accum + this.ingridientsPrice[item] : accum;
+    this.totalPrice = function() {    
+        var pizzaArea = this.area();
+        var ingredientsPriceSum = this.ingredients.reduce((accum, item) => {       
+            return this.ingredientsPrice.hasOwnProperty(item) ? accum + this.ingredientsPrice[item] : accum;
         }, 0);
-        return ((area * this.squareCmPrice) + ingridientsSum) * this.percentage / 100 + (area * this.squareCmPrice) + ingridientsSum;
+        return ((pizzaArea * this.squareCmPrice) + ingredientsPriceSum) * this.percentage / 100 + (pizzaArea * this.squareCmPrice) + ingredientsPriceSum;
     }    
 }
 
-function SquaredPizza(sideLength) {
+function SquaredPizza(sideLength, ingredients) {
     Pizza.call(this);
     this.sideLength = sideLength;
+    this.ingredients = ingredients;
     this.area = function() {
         return this.sideLength * this.sideLength;
     };
 }
 
-function CircledPizza(diameter) {
+function CircledPizza(diameter, ingredients) {
     Pizza.call(this);
     this.diameter = diameter;
+    this.ingredients = ingredients;
     this.area = function () {
         return (this.diameter * this.diameter * Math.PI) / 4;
     };
 }
 
-var pepperoniSquared = new SquaredPizza(10);
-var pepperoniCircled = new CircledPizza(20);
-pepperoniSquared.totalPrice(pepperoniSquared.area(), ['meat', 'cheese']);
+var pepperoniSquared = new SquaredPizza(10, [ingredientsKey.meat, ingredientsKey.mushrooms]);
+var pepperoniCircled = new CircledPizza(10, [ingredientsKey.meat, ingredientsKey.cheese]);
+
+pepperoniSquared.totalPrice();
 
 

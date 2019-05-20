@@ -1,6 +1,7 @@
 var ingredientsKey = { meat: 'meat', cheese: 'cheese', mushrooms: 'mushrooms'};
 
-function Pizza() {
+function Pizza(ingredients) {
+    this.ingredients = ingredients;
     this.squareCmPrice = 10;
     this.ingredientsPrice = { meat: 10, cheese: 5, mushrooms: 15 };
     this.percentage = 5;
@@ -14,7 +15,7 @@ function Pizza() {
 }
 
 function SquaredPizza(sideLength, ingredients) {
-    Pizza.call(this);
+    Pizza.call(this, ingredients);
     this.sideLength = sideLength;
     this.ingredients = ingredients;
     this.area = function() {
@@ -23,7 +24,7 @@ function SquaredPizza(sideLength, ingredients) {
 }
 
 function CircledPizza(diameter, ingredients) {
-    Pizza.call(this);
+    Pizza.call(this, ingredients);
     this.diameter = diameter;
     this.ingredients = ingredients;
     this.area = function () {

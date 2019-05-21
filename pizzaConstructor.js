@@ -17,7 +17,6 @@ function Pizza(ingredients) {
 function SquaredPizza(sideLength, ingredients) {
     Pizza.call(this, ingredients);
     this.sideLength = sideLength;
-    this.ingredients = ingredients;
     this.area = function() {
         return this.sideLength * this.sideLength;
     };
@@ -26,7 +25,6 @@ function SquaredPizza(sideLength, ingredients) {
 function CircledPizza(diameter, ingredients) {
     Pizza.call(this, ingredients);
     this.diameter = diameter;
-    this.ingredients = ingredients;
     this.area = function () {
         return (this.diameter * this.diameter * Math.PI) / 4;
     };
